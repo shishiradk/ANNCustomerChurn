@@ -33,8 +33,11 @@ is_active_member = st.selectbox('Is Active Member', [0, 1])
 # 3) Encode inputs
 gender_encoded = label_encoder_gender.transform([gender])[0]
 
-# Fixed: Remove .toarray() since the encoder returns a dense array
-geo_encoded = onehot_encoder_geo.transform([[geography]])
+# Encode geography and handle both sparse and dense outputs
+geo_input = pd.DataFrame({'Geography': [geography]})
+geo_encoded = onehot_encoder_geo.transform(geo_input)
+if hasattr(geo_encoded, 'toarray'):
+    geo_encoded = geo_encoded.toarray()
 
 # 4) Assemble DataFrame
 base_df = pd.DataFrame({
